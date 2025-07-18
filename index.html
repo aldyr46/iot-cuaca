@@ -13,6 +13,7 @@
       padding: 30px;
       background: linear-gradient(to right, #ece9e6, #ffffff);
       color: #333;
+      transition: background-color 0.3s, color 0.3s;
     }
     .container {
       max-width: 600px;
@@ -21,6 +22,7 @@
       padding: 25px;
       border-radius: 15px;
       box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      transition: all 0.3s ease;
     }
     h1 {
       text-align: center;
@@ -34,6 +36,19 @@
       border: 1px solid #ddd;
       border-radius: 8px;
       font-size: 16px;
+      transition: all 0.3s ease;
+    }
+    select:hover, button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    button {
+      background-color: #1e90ff;
+      color: white;
+      border: none;
+    }
+    button:active {
+      transform: scale(0.98);
     }
     #weatherEmoji {
       font-size: 64px;
@@ -56,6 +71,22 @@
       50% { transform: translateY(-8px); }
       100% { transform: translateY(0px); }
     }
+    /* Dark Mode Styles */
+    .dark {
+      background-color: #0d1117;
+      color: #f0f6fc;
+    }
+    .dark .container {
+      background-color: #161b22;
+    }
+    .dark select, .dark button {
+      background-color: #238636;
+      color: white;
+      border: none;
+    }
+    .dark #weather {
+      background-color: #21262d;
+    }
   </style>
 </head>
 <body>
@@ -75,6 +106,7 @@
       <option value="Balikpapan">Balikpapan</option>
     </select>
     <button onclick="getWeather()">Tampilkan Cuaca</button>
+    <button onclick="toggleDarkMode()">🌓 Dark Mode</button>
     <div id="weather">
       <p>Data cuaca akan ditampilkan di sini...</p>
     </div>
@@ -90,7 +122,7 @@
     function getWeatherEmoji(description) {
       description = description.toLowerCase();
       if (description.includes('hujan')) return '🌧️';
-      if (description.includes('berawan')) return '☁️';
+      if (description.includes('berawan') || description.includes('awan')) return '☁️';
       if (description.includes('cerah')) return '☀️';
       if (description.includes('kabut')) return '🌫️';
       return '❓';
@@ -155,6 +187,10 @@
             document.getElementById('weather').innerHTML = `<p>Kota tidak ditemukan.</p>`;
           }
         });
+    }
+
+    function toggleDarkMode() {
+      document.body.classList.toggle('dark');
     }
 
     window.onload = () => getWeather();
