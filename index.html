@@ -13,7 +13,6 @@
       padding: 30px;
       background: linear-gradient(to right, #ece9e6, #ffffff);
       color: #333;
-      transition: background-color 0.3s, color 0.3s;
     }
     .container {
       max-width: 600px;
@@ -22,8 +21,6 @@
       padding: 25px;
       border-radius: 15px;
       box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-      transition: all 0.3s ease;
-      animation: fadeIn 1s ease-in-out;
     }
     h1 {
       text-align: center;
@@ -37,48 +34,27 @@
       border: 1px solid #ddd;
       border-radius: 8px;
       font-size: 16px;
-      transition: all 0.3s ease;
     }
-    select:hover, button:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-    }
-    button {
-      background-color: #1e90ff;
-      color: white;
-      border: none;
-    }
-    button:active {
-      transform: scale(0.98);
+    #weatherEmoji {
+      font-size: 64px;
+      animation: float 2s infinite;
+      display: block;
+      margin: 10px auto;
     }
     #weather {
-      margin-top: 20px;
-      background: #f9f9f9;
-      border-radius: 12px;
-      padding: 15px;
       text-align: center;
+      background: #f9f9f9;
+      padding: 15px;
+      border-radius: 10px;
+      margin-top: 20px;
     }
     canvas {
       margin-top: 30px;
     }
-    .dark {
-      background-color: #0d1117;
-      color: #f0f6fc;
-    }
-    .dark .container {
-      background-color: #161b22;
-    }
-    .dark select, .dark button {
-      background-color: #238636;
-      color: white;
-      border: none;
-    }
-    .dark #weather {
-      background-color: #21262d;
-    }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
+    @keyframes float {
+      0% { transform: translateY(0px); }
+      50% { transform: translateY(-8px); }
+      100% { transform: translateY(0px); }
     }
   </style>
 </head>
@@ -99,7 +75,6 @@
       <option value="Balikpapan">Balikpapan</option>
     </select>
     <button onclick="getWeather()">Tampilkan Cuaca</button>
-    <button onclick="toggleDarkMode()">🌓 Dark Mode</button>
     <div id="weather">
       <p>Data cuaca akan ditampilkan di sini...</p>
     </div>
@@ -111,6 +86,15 @@
     let cityName = '';
     let tempData = [];
     let timeLabels = [];
+
+    function getWeatherEmoji(description) {
+      description = description.toLowerCase();
+      if (description.includes('hujan')) return '🌧️';
+      if (description.includes('berawan')) return '☁️';
+      if (description.includes('cerah')) return '☀️';
+      if (description.includes('kabut')) return '🌫️';
+      return '❓';
+    }
 
     const ctx = document.getElementById('tempChart').getContext('2d');
     const tempChart = new Chart(ctx, {
@@ -148,8 +132,10 @@
           if (data.cod === 200) {
             const suhu = data.main.temp;
             const waktu = new Date().toLocaleTimeString();
+            const emoji = getWeatherEmoji(data.weather[0].description);
 
             document.getElementById('weather').innerHTML = `
+              <div id="weatherEmoji">${emoji}</div>
               <h2>Cuaca di ${data.name}</h2>
               <p><strong>${data.weather[0].description}</strong></p>
               <p>Suhu: ${suhu}°C</p>
@@ -171,15 +157,10 @@
         });
     }
 
-    function toggleDarkMode() {
-      document.body.classList.toggle('dark');
-    }
-
+    window.onload = () => getWeather();
     setInterval(() => {
       if (cityName) getWeather();
     }, 60000);
-
-    window.onload = () => getWeather();
   </script>
 </body>
 </html>
